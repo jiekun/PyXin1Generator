@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import io
 import re
 
 
@@ -11,6 +10,10 @@ class Eac3toWrapper:
         self.playlist_list = []
 
     def get_playlist(self):
+        """
+        Scan disc structure. Store brief playlist info in self.playlist_list[]
+        :return:
+        """
         if not os.path.isdir(self.source_dir):
             raise Exception('Invalid Blu-ray folder')
         parsed_source_dir = '"' + self.source_dir + '"'
@@ -60,6 +63,12 @@ class Eac3toWrapper:
                     playlist_info['duration'] = re.search(r'(?<=.mpls,)[0-9:]+', line).group()
 
     def playlist_scan(self, playlist_num):
+        """
+        Scan specific playlist
+        Writing full eac3to analysis log to self.playlist_list
+        :param playlist_num:
+        :return:
+        """
         playlist_info = self.playlist_list[playlist_num - 1]
         parsed_source_dir = '"' + self.source_dir + '"'
         cli_template = [self.eac3to_path, parsed_source_dir, playlist_info['playlist_num'] + ')']
