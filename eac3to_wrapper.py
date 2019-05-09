@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import subprocess
+from collections import OrderedDict
 
 
 class Eac3toWrapper:
@@ -51,7 +53,7 @@ class Eac3toWrapper:
                     'playlist': re.search(r'\d+(?=(.mpls))', line).group(),
                     'duration': '',
                     'm2ts_list': [],
-                    'chapters': 0,
+                    'chapters': -1,
                     'tracks': []
                 }
 
@@ -86,6 +88,27 @@ class Eac3toWrapper:
                 playlist_info['tracks'].append(line)
         self.playlist_list[playlist_num - 1] = playlist_info
 
+    def chapter_scan(self, playlist_num):
+        playlist_info = self.playlist_list[playlist_num - 1]
+        parsed_source_dir = '"' + self.source_dir + '"'
+        if playlist_info['chapters'] == -1:
+            raise Exception('No Chapter Founded.')
+        chapter_file_name = str(playlist_info['playlist']) + '_chapter.txt'
+        cli_template = [self.eac3to_path, parsed_source_dir, playlist_info['playlist_num'] + ')',
+                        '1:' + chapter_file_name, '-log=nul']
+        cli = ' '.join(cli_template)
+        subprocess.run(cli)
+        chapter_info = OrderedDict({})
+        with open(chapter_file_name, 'r') as f:
+            for line in f.readlines():
+                if 'NAME' not in line:
+                    chapter_num = line[7:9]
+                    chapter_time = line[-12:].strip('\n')
+                    chapter_info[int(chapter_num)] = chapter_time
+
+        os.remove(chapter_file_name)
+        self.playlist_list[playlist_num - 1]['chapter_detail'] = chapter_info
+
 
 if __name__ == '__main__':
     eac3to_test = Eac3toWrapper()
@@ -93,4 +116,5 @@ if __name__ == '__main__':
     eac3to_test.eac3to_path = r'D:\Xin1Generator_v0.11\eac3to.exe'
     eac3to_test.get_playlist()
     eac3to_test.playlist_scan(1)
+    eac3to_test.chapter_scan(1)
     print('ok')
