@@ -1,6 +1,7 @@
 ﻿# Project Custom
 PyXin1Generator/
 .idea/
+*.exe
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
