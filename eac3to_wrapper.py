@@ -112,7 +112,7 @@ class Eac3toWrapper:
 
 if __name__ == '__main__':
     eac3to_test = Eac3toWrapper()
-    eac3to_test.source_dir = r'V:\\'
+    eac3to_test.source_dir = r'G:\BluRay\Black.Hawk.Down.2001.COMPLETE.UHD.BLURAY-TERMiNAL'
     eac3to_test.eac3to_path = r'D:\Xin1Generator_v0.11\eac3to.exe'
     eac3to_test.get_playlist()
     eac3to_test.playlist_scan(1)
